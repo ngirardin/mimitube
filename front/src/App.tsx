@@ -1,44 +1,26 @@
-import React, { useRef, useState } from "react";
+import { Flex } from "@chakra-ui/core";
+import React, { useRef } from "react";
 import ReactPlayer from "react-player";
-import "./App.css";
+import HomePage from "./pages/HomePage";
+
+interface QualityChangeEvent {
+  mediaType: "video";
+  newQuality: number;
+  oldQuality: number;
+  type: "qualityChangeRendered";
+}
 
 const url = "https://mimitube-videos.s3-eu-west-1.amazonaws.com/test/out.mpd";
+
+const resolutions = [360, 720, 1080, 2160];
 
 const App = () => {
   const ref = useRef<ReactPlayer>(null);
 
-  const [activeStream, setActiveStream] = useState({ id: -1, index: -1, isLast: false });
-
   return (
-    <>
-      <p>id: {activeStream.id}</p>
-      <p>index: {activeStream.index}</p>
-      <p>isLast: {activeStream.isLast ? "true" : "false"}</p>
-
-      <ReactPlayer
-        controls={true}
-        playing={true}
-        onReady={() => {
-          if (!ref.current) {
-            throw new Error("No ref");
-          }
-
-          const dashPlayer: any = ref.current.getInternalPlayer("dash");
-
-          setInterval(() => {
-            const { id, index, isLast } = dashPlayer.getActiveStream().getStreamInfo();
-            if (activeStream.id !== id) {
-              setActiveStream({ id, index, isLast });
-            }
-          });
-
-          console.log(dashPlayer);
-          dashPlayer.on("qualityChangeRendered", console.log);
-        }}
-        ref={ref}
-        url={url}
-      />
-    </>
+    <Flex>
+      <HomePage />
+    </Flex>
   );
 };
 
