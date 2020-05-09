@@ -14,18 +14,6 @@ const ffprobe = async (file: string): Promise<FfprobeData> => {
   });
 };
 
-const ffmpeg = async (file: string): Promise<FfprobeData> => {
-  return new Promise((resolve, reject) => {
-    Ffmpeg(file, (err, data) => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve(data);
-    });
-  });
-};
-
 const readCreationTime = async (fullPath: string): Promise<string> => {
   const metadata = await ffprobe(fullPath);
 
@@ -81,13 +69,11 @@ const encode = (fileIn: string, fileOut: string, encodingParams: EncodingParams,
     const { bitrate, crf, maxRate, minRate, resolution, threads, tileColumns } = encodingParams;
 
     const command = Ffmpeg(fileIn)
-      .frames(200)
       .size(`${resolution.width}x${resolution.height}`)
       .fps(50)
       .autopad()
       .videoBitrate(bitrate)
       .videoCodec("libvpx-vp9")
-      .videoFilters(`drawtext=text=${resolution.height}:fontcolor=white:fontsize=500`)
       .outputOptions(`-minrate ${minRate}`)
       .outputOptions(`-maxrate ${maxRate}`)
       .outputOptions(`-tile-columns ${tileColumns}`)
