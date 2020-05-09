@@ -8,6 +8,7 @@
     "dev": "ts-node-dev app.ts"
   },
   "devDependencies": {
+    "@types/cli-progress": "^3.7.0",
     "@types/fluent-ffmpeg": "^2.1.14",
     "@types/node": "^13.13.5",
     "prettier": "^2.0.5",
@@ -16,7 +17,7 @@
   },
   "dependencies": {
     "@types/progress": "^2.0.3",
-    "fluent-ffmpeg": "^2.1.2",
-    "progress": "^2.0.3"
+    "cli-progress": "^3.8.2",
+    "fluent-ffmpeg": "^2.1.2"
   }
 }

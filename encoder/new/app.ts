@@ -1,6 +1,6 @@
+import CliProgress from "cli-progress";
 import Ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 import fs from "fs";
-import Progress from "progress";
 
 const ffprobe = async (file: string): Promise<FfprobeData> => {
   return new Promise((resolve, reject) => {
@@ -86,13 +86,10 @@ const encode = (fileIn: string, fileOut: string, encodingParams: EncodingParams,
       .audioCodec("libopus")
       .output(fileOut);
 
-    // console.log(command._getArguments().join(" "));
-    // resolve();
-
-    const bar = new Progress("[:bar] :percent pass :pass at :height, :fps fps - :etas remaining - frame: :timemark", {
-      width: 20,
-      total: 100,
+    const fileProgress = new CliProgress.Bar({
+      format: "[{bar}] {percentage}% | {eta_formatted} | {fps} fps for pass {pass} at {width}x{height} | {timemark}",
     });
+    fileProgress.start(100, 0, { fps: 0, pass: 0, width: 0, height: 0, timemark: "00:00:00" });
 
     command
       .on("error", function (err, stdout, stderr) {
@@ -103,11 +100,17 @@ const encode = (fileIn: string, fileOut: string, encodingParams: EncodingParams,
       })
       .on("progress", function (progress) {
         const { currentFps, timemark, percent } = progress;
-        bar.tick(percent, { height: encodingParams.resolution.height, fps: Math.round(currentFps), pass, timemark });
+        fileProgress.update(percent, {
+          fps: Math.round(currentFps),
+          width: encodingParams.resolution.width,
+          height: encodingParams.resolution.height,
+          pass,
+          timemark,
+        });
       })
       .on("end", () => {
         // Clear the progress bar
-        console.log();
+        fileProgress.stop();
         resolve();
       })
       .run();
