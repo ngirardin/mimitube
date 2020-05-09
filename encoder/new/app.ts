@@ -13,15 +13,12 @@ const ffprobe = async (file: string): Promise<FfprobeData> => {
   });
 };
 
-interface InputFile {
-  fullPath: string;
-  creationTime: string;
-}
-
 const getFullPathFiles = async (path: string): Promise<string[]> =>
   (await fs.promises.readdir(path)).map((file) => `${path}/${file}`);
 
-const readCreationTime = async (fullPath: string): Promise<InputFile> => {
+const normalizeCreationTime = (creationTime: string): string => creationTime.slice(0, 19).replace(/\:/g, "-");
+
+const readCreationTime = async (fullPath: string): Promise<string> => {
   const metadata = await ffprobe(fullPath);
 
   const tags: any = metadata.format.tags;
@@ -31,7 +28,42 @@ const readCreationTime = async (fullPath: string): Promise<InputFile> => {
     throw new Error(`No creation_time in ${fullPath}`);
   }
 
-  return { fullPath, creationTime };
+  return creationTime;
+};
+
+interface InputFile {
+  file: string;
+  creationTime: string;
+}
+
+const extractDates = async (path: string): Promise<InputFile[]> => {
+  const inFiles = await getFullPathFiles(path);
+  console.log(`Processing ${inFiles.length} files in ${path}`);
+
+  console.log("reading creation date...");
+
+  return Promise.all(
+    inFiles.map(async (file) => {
+      const creationTime = await readCreationTime(file);
+      process.stdout.write(".");
+      return { file, creationTime };
+    })
+  );
+};
+
+interface InputFileVariant {
+  name: string;
+  files: InputFile[];
+}
+
+const createVariants = async (path: string): Promise<InputFileVariant[]> => {
+  const clean = await extractDates(`${path}/clean`);
+  const nsfw = await extractDates(`${path}/nsfw`);
+
+  return [
+    { name: "clean", files: clean },
+    { name: "nsfw", files: [...clean, ...nsfw] },
+  ];
 };
 
 const app = async () => {
@@ -42,21 +74,7 @@ const app = async () => {
     return;
   }
 
-  const inFiles = await getFullPathFiles(path);
-  console.log(`Processing ${inFiles.length} files`);
-
-  console.log("reading creation date...");
-  const creationTimes = await Promise.all(
-    inFiles.map(async (file) => {
-      const out = await readCreationTime(file);
-      process.stdout.write(".");
-      return out;
-    })
-  );
-
-  // const creationDate = creationTime.slice(0, 19).replace(/\:/g, "-");
-
-  console.log(creationTimes);
+  const variants = await createVariants(path);
 };
 
 app();
