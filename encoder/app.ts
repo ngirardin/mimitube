@@ -3,19 +3,6 @@ import Ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
 import ffprobePromise from "./ffprobePromise";
 
-const readCreationTime = async (fullPath: string): Promise<string> => {
-  const metadata = await ffprobePromise.probe(fullPath);
-
-  const tags: any = metadata.format.tags;
-  const creationTime: string = tags.creation_time;
-
-  if (creationTime.length !== 27) {
-    throw new Error(`No creation_time in ${fullPath}`);
-  }
-
-  return creationTime;
-};
-
 interface InputFile {
   file: string;
   creationTime: string;
@@ -135,7 +122,8 @@ const encodeAllFiles = async (
 
     const inFile = `${inPath}/${filename}`;
 
-    const timestamp = normalizeCreationTime(await readCreationTime(inFile));
+    const metadata = await ffprobePromise.probe(inFile);
+    const timestamp = normalizeCreationTime(await readCreationTime(metadata));
     const outFile = `${outPath}/${encodingParam.resolution.height}_${timestamp}.webm`;
 
     return encodeFile(inFile, outFile, encodingParam);
