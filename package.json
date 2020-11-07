@@ -16,9 +16,7 @@
     "concurrently": "^5.2.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
-    "gatsby-cli": "^2.12.7",
     "prettier": "^2.0.5",
     "typescript": "^3.8.3"
-  },
-  "dependencies": {}
+  }
 }
