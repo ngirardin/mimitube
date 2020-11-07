@@ -4,6 +4,11 @@
   "author": "ngirardin@gmail.com",
   "license": "private",
   "private": true,
+  "workspaces": [
+    "back",
+    "encoder",
+    "front"
+  ],
   "scripts": {
     "deploy:back": "yarn --cwd back dev",
     "dev:back": "yarn --cwd back serverless offline",
