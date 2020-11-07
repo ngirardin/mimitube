@@ -3282,6 +3282,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@jest/create-cache-key-function", [
+        ["npm:26.6.2", {
+          "packageLocation": "./.yarn/cache/@jest-create-cache-key-function-npm-26.6.2-e878523634-0cd38cdd03.zip/node_modules/@jest/create-cache-key-function/",
+          "packageDependencies": [
+            ["@jest/create-cache-key-function", "npm:26.6.2"],
+            ["@jest/types", "npm:26.6.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@jest/environment", [
         ["npm:24.9.0", {
           "packageLocation": "./.yarn/cache/@jest-environment-npm-24.9.0-8708e47612-77f7313e1b.zip/node_modules/@jest/environment/",
@@ -7528,6 +7538,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["bs-logger", [
+        ["npm:0.2.6", {
+          "packageLocation": "./.yarn/cache/bs-logger-npm-0.2.6-7670f88b66-f5f2f1315d.zip/node_modules/bs-logger/",
+          "packageDependencies": [
+            ["bs-logger", "npm:0.2.6"],
+            ["fast-json-stable-stringify", "npm:2.1.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["bser", [
         ["npm:2.1.1", {
           "packageLocation": "./.yarn/cache/bser-npm-2.1.1-cc902055ce-302af19567.zip/node_modules/bser/",
@@ -10542,12 +10562,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["encoder", "workspace:encoder"],
             ["@types/cli-progress", "npm:3.8.0"],
             ["@types/fluent-ffmpeg", "npm:2.1.16"],
+            ["@types/jest", "npm:26.0.15"],
             ["@types/node", "npm:14.14.6"],
             ["@types/progress", "npm:2.0.3"],
             ["cli-progress", "npm:3.8.2"],
             ["fluent-ffmpeg", "npm:2.1.2"],
             ["jest", "npm:26.6.3"],
             ["prettier", "npm:2.0.5"],
+            ["ts-jest", "virtual:0c2533abac2a0460b24b5a4763a360946a5ea0476e49872c9322005b0d8c0c15e5ea41a407dbf1f18f73fe14e2e779a66483f805c2f6923acbc6b7b8ec842365#npm:26.4.3"],
             ["ts-node-dev", "virtual:0c2533abac2a0460b24b5a4763a360946a5ea0476e49872c9322005b0d8c0c15e5ea41a407dbf1f18f73fe14e2e779a66483f805c2f6923acbc6b7b8ec842365#npm:1.0.0"],
             ["typescript", "patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=5bf698"]
           ],
@@ -24789,6 +24811,36 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/trough-npm-1.0.5-791a6e37e5-c116d9e7dd.zip/node_modules/trough/",
           "packageDependencies": [
             ["trough", "npm:1.0.5"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["ts-jest", [
+        ["virtual:0c2533abac2a0460b24b5a4763a360946a5ea0476e49872c9322005b0d8c0c15e5ea41a407dbf1f18f73fe14e2e779a66483f805c2f6923acbc6b7b8ec842365#npm:26.4.3", {
+          "packageLocation": "./.yarn/$$virtual/ts-jest-virtual-6137fe26f0/0/cache/ts-jest-npm-26.4.3-77cf762dd9-d9c2f802ec.zip/node_modules/ts-jest/",
+          "packageDependencies": [
+            ["ts-jest", "virtual:0c2533abac2a0460b24b5a4763a360946a5ea0476e49872c9322005b0d8c0c15e5ea41a407dbf1f18f73fe14e2e779a66483f805c2f6923acbc6b7b8ec842365#npm:26.4.3"],
+            ["@jest/create-cache-key-function", "npm:26.6.2"],
+            ["@types/jest", "npm:26.0.15"],
+            ["@types/typescript", null],
+            ["bs-logger", "npm:0.2.6"],
+            ["buffer-from", "npm:1.1.1"],
+            ["fast-json-stable-stringify", "npm:2.1.0"],
+            ["jest", "npm:26.6.3"],
+            ["jest-util", "npm:26.6.2"],
+            ["json5", "npm:2.1.3"],
+            ["lodash.memoize", "npm:4.1.2"],
+            ["make-error", "npm:1.3.6"],
+            ["mkdirp", "npm:1.0.4"],
+            ["semver", "npm:7.3.2"],
+            ["typescript", "patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=5bf698"],
+            ["yargs-parser", "npm:20.2.3"]
+          ],
+          "packagePeers": [
+            "@types/jest",
+            "@types/typescript",
+            "jest",
+            "typescript"
           ],
           "linkType": "HARD",
         }]
