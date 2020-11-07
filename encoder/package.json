@@ -1,0 +1,23 @@
+{
+  "name": "encodeo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node-dev app.ts"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.8.0",
+    "@types/fluent-ffmpeg": "^2.1.16",
+    "@types/node": "^14.14.6",
+    "prettier": "^2.0.5",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@types/progress": "^2.0.3",
+    "cli-progress": "^3.8.2",
+    "fluent-ffmpeg": "^2.1.2"
+  }
+}
