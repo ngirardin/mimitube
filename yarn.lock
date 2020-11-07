@@ -8307,9 +8307,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"encodeo@workspace:encoder":
+"encoder@workspace:encoder":
   version: 0.0.0-use.local
-  resolution: "encodeo@workspace:encoder"
+  resolution: "encoder@workspace:encoder"
   dependencies:
     "@types/cli-progress": ^3.8.0
     "@types/fluent-ffmpeg": ^2.1.16

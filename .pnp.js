@@ -27,7 +27,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:back"
       },
       {
-        "name": "encodeo",
+        "name": "encoder",
         "reference": "workspace:encoder"
       },
       {
@@ -39,7 +39,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     "ignorePatternData": "(^(?:\\.yarn\\/sdks(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$))$)",
     "fallbackExclusionList": [
       ["back", ["workspace:back"]],
-      ["encodeo", ["workspace:encoder"]],
+      ["encoder", ["workspace:encoder"]],
       ["front", ["workspace:front"]],
       ["mimitube", ["workspace:."]]
     ],
@@ -9927,11 +9927,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["encodeo", [
+      ["encoder", [
         ["workspace:encoder", {
           "packageLocation": "./encoder/",
           "packageDependencies": [
-            ["encodeo", "workspace:encoder"],
+            ["encoder", "workspace:encoder"],
             ["@types/cli-progress", "npm:3.8.0"],
             ["@types/fluent-ffmpeg", "npm:2.1.16"],
             ["@types/node", "npm:14.14.6"],
@@ -9939,7 +9939,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["cli-progress", "npm:3.8.2"],
             ["fluent-ffmpeg", "npm:2.1.2"],
             ["prettier", "npm:2.0.5"],
-            ["ts-node-dev", "virtual:3ecddfb5f2eb7471dea13022c5f1a118ec5779096bb0eb4d319ac1614b37b4e45bef3191704bc074c49db495013db24badc4662910026faf057be91c4577337b#npm:1.0.0"],
+            ["ts-node-dev", "virtual:0c2533abac2a0460b24b5a4763a360946a5ea0476e49872c9322005b0d8c0c15e5ea41a407dbf1f18f73fe14e2e779a66483f805c2f6923acbc6b7b8ec842365#npm:1.0.0"],
             ["typescript", "patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=5bf698"]
           ],
           "linkType": "SOFT",
@@ -23572,10 +23572,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:9b9772078d956d7bebfb87ad6ee7a65fa49791dad3bdd091c0a510913a183f0a0d19e548fce9b5b1233d3d59789374acb68abe504a6c75fb37a6096ffa058ef6#npm:9.0.0", {
-          "packageLocation": "./.yarn/$$virtual/ts-node-virtual-cc69a50121/0/cache/ts-node-npm-9.0.0-7f58a021c2-49d2ab087f.zip/node_modules/ts-node/",
+        ["virtual:f2b572158c5760e09de941500deb903a1340e4e3cf04084b6949b63c4431c9dd26913629fe7f938c91d4f5ca66499a9cb10fa25cd02b165539dcbe5f2570957b#npm:9.0.0", {
+          "packageLocation": "./.yarn/$$virtual/ts-node-virtual-8cf4569040/0/cache/ts-node-npm-9.0.0-7f58a021c2-49d2ab087f.zip/node_modules/ts-node/",
           "packageDependencies": [
-            ["ts-node", "virtual:9b9772078d956d7bebfb87ad6ee7a65fa49791dad3bdd091c0a510913a183f0a0d19e548fce9b5b1233d3d59789374acb68abe504a6c75fb37a6096ffa058ef6#npm:9.0.0"],
+            ["ts-node", "virtual:f2b572158c5760e09de941500deb903a1340e4e3cf04084b6949b63c4431c9dd26913629fe7f938c91d4f5ca66499a9cb10fa25cd02b165539dcbe5f2570957b#npm:9.0.0"],
             ["@types/typescript", null],
             ["arg", "npm:4.1.3"],
             ["diff", "npm:4.0.2"],
@@ -23592,10 +23592,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["ts-node-dev", [
-        ["virtual:3ecddfb5f2eb7471dea13022c5f1a118ec5779096bb0eb4d319ac1614b37b4e45bef3191704bc074c49db495013db24badc4662910026faf057be91c4577337b#npm:1.0.0", {
-          "packageLocation": "./.yarn/$$virtual/ts-node-dev-virtual-9b9772078d/0/cache/ts-node-dev-npm-1.0.0-03ff9cc5a6-3e1064a042.zip/node_modules/ts-node-dev/",
+        ["virtual:0c2533abac2a0460b24b5a4763a360946a5ea0476e49872c9322005b0d8c0c15e5ea41a407dbf1f18f73fe14e2e779a66483f805c2f6923acbc6b7b8ec842365#npm:1.0.0", {
+          "packageLocation": "./.yarn/$$virtual/ts-node-dev-virtual-f2b572158c/0/cache/ts-node-dev-npm-1.0.0-03ff9cc5a6-3e1064a042.zip/node_modules/ts-node-dev/",
           "packageDependencies": [
-            ["ts-node-dev", "virtual:3ecddfb5f2eb7471dea13022c5f1a118ec5779096bb0eb4d319ac1614b37b4e45bef3191704bc074c49db495013db24badc4662910026faf057be91c4577337b#npm:1.0.0"],
+            ["ts-node-dev", "virtual:0c2533abac2a0460b24b5a4763a360946a5ea0476e49872c9322005b0d8c0c15e5ea41a407dbf1f18f73fe14e2e779a66483f805c2f6923acbc6b7b8ec842365#npm:1.0.0"],
             ["@types/node-notifier", null],
             ["@types/typescript", null],
             ["chokidar", "npm:3.4.3"],
@@ -23608,7 +23608,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["rimraf", "npm:2.7.1"],
             ["source-map-support", "npm:0.5.19"],
             ["tree-kill", "npm:1.2.2"],
-            ["ts-node", "virtual:9b9772078d956d7bebfb87ad6ee7a65fa49791dad3bdd091c0a510913a183f0a0d19e548fce9b5b1233d3d59789374acb68abe504a6c75fb37a6096ffa058ef6#npm:9.0.0"],
+            ["ts-node", "virtual:f2b572158c5760e09de941500deb903a1340e4e3cf04084b6949b63c4431c9dd26913629fe7f938c91d4f5ca66499a9cb10fa25cd02b165539dcbe5f2570957b#npm:9.0.0"],
             ["tsconfig", "npm:7.0.0"],
             ["typescript", "patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=5bf698"]
           ],

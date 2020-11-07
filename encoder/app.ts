@@ -1,21 +1,10 @@
 import CliProgress from "cli-progress";
-import Ffmpeg, { FfprobeData } from "fluent-ffmpeg";
+import Ffmpeg from "fluent-ffmpeg";
 import fs from "fs";
-
-const ffprobe = async (file: string): Promise<FfprobeData> => {
-  return new Promise((resolve, reject) => {
-    Ffmpeg.ffprobe(file, (err, data) => {
-      if (err) {
-        return reject(err);
-      }
-
-      return resolve(data);
-    });
-  });
-};
+import ffprobePromise from "./ffprobePromise";
 
 const readCreationTime = async (fullPath: string): Promise<string> => {
-  const metadata = await ffprobe(fullPath);
+  const metadata = await ffprobePromise.probe(fullPath);
 
   const tags: any = metadata.format.tags;
   const creationTime: string = tags.creation_time;
