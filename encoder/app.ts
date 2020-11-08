@@ -1,14 +1,15 @@
 import CliProgress from "cli-progress";
 import Ffmpeg from "fluent-ffmpeg";
-import fs from "fs";
-import ffprobePromise from "./ffprobePromise";
+import parseArguments from "./parseArguments";
+import videoUtils from "./videoUtils";
 
-interface InputFile {
-  file: string;
-  creationTime: string;
-}
+// interface InputFile {
+//   file: string;
+//   creationTime: string;
+// }
 
-const normalizeCreationTime = (creationTime: string): string => creationTime.slice(0, 19).replace(/\:/g, "-");
+const normalizeCreationTime = (creationTime: Date): string =>
+  creationTime.toISOString().slice(0, 19).replace(/\:/g, "-");
 
 // interface InputFileVariant {
 //   name: string;
@@ -122,78 +123,83 @@ const encodeAllFiles = async (
 
     const inFile = `${inPath}/${filename}`;
 
-    const metadata = await ffprobePromise.probe(inFile);
-    const timestamp = normalizeCreationTime(await readCreationTime(metadata));
+    const creationDate = await videoUtils.getCreationTime(inFile);
+    const timestamp = normalizeCreationTime(creationDate.date);
     const outFile = `${outPath}/${encodingParam.resolution.height}_${timestamp}.webm`;
 
     return encodeFile(inFile, outFile, encodingParam);
   }, Promise.resolve());
 };
 
-const app = async () => {
-  const path = process.argv[2];
+const app = () => {
+  const args = parseArguments(process.argv);
 
-  if (!path) {
-    console.error("Missing path argument");
-    return;
+  if ("error" in args) {
+    console.error(args.error);
+    process.exit(1);
   }
 
-  // const variants = await createVariants(path);
-
-  const encodingParams: EncodingParams[] = [
-    {
-      bitrate: "276k",
-      crf: 36,
-      maxRate: "400k",
-      minRate: "138k",
-      resolution: { height: 360, width: 640 },
-      threads: 4,
-      tileColumns: 1,
-    },
-    {
-      bitrate: "1800k",
-      crf: 32,
-      maxRate: "2610k",
-      minRate: "900k",
-      resolution: { width: 1280, height: 720 },
-      threads: 8,
-      tileColumns: 2,
-    },
-    {
-      bitrate: "3000k",
-      crf: 31,
-      maxRate: "4350k",
-      minRate: "1500k",
-      resolution: { width: 1920, height: 1080 },
-      threads: 8,
-      tileColumns: 2,
-    },
-    {
-      resolution: { width: 3840, height: 2160 },
-      bitrate: "18000k",
-      minRate: "9000k",
-      maxRate: "26100k",
-      tileColumns: 3,
-      threads: 24,
-      crf: 15,
-    },
-  ];
-
-  const inCleanPath = `${path}/sources/clean`;
-  const inNsfwPath = `${path}/sources/nsfw`;
-
-  const outCleanPath = `${path}/out/clean`;
-  // const outCleanPath = ".";
-
-  const outNsfwPath = `${path}/out/nsfw`;
-
-  const inCleanFiles = await fs.promises.readdir(inCleanPath);
-  const inNsfwFiles = await fs.promises.readdir(inNsfwPath);
-
-  console.log(`Encoding ${inCleanPath} files...`);
-  await encodeAllFiles(inCleanPath, inCleanFiles, outCleanPath, encodingParams);
-
-  console.log("All done!");
+  console.log(args);
 };
 
 app();
+
+// const app = async () => {
+
+//   // const variants = await createVariants(path);
+
+//   const encodingParams: EncodingParams[] = [
+//     {
+//       bitrate: "276k",
+//       crf: 36,
+//       maxRate: "400k",
+//       minRate: "138k",
+//       resolution: { height: 360, width: 640 },
+//       threads: 4,
+//       tileColumns: 1,
+//     },
+//     {
+//       bitrate: "1800k",
+//       crf: 32,
+//       maxRate: "2610k",
+//       minRate: "900k",
+//       resolution: { width: 1280, height: 720 },
+//       threads: 8,
+//       tileColumns: 2,
+//     },
+//     {
+//       bitrate: "3000k",
+//       crf: 31,
+//       maxRate: "4350k",
+//       minRate: "1500k",
+//       resolution: { width: 1920, height: 1080 },
+//       threads: 8,
+//       tileColumns: 2,
+//     },
+//     {
+//       resolution: { width: 3840, height: 2160 },
+//       bitrate: "18000k",
+//       minRate: "9000k",
+//       maxRate: "26100k",
+//       tileColumns: 3,
+//       threads: 24,
+//       crf: 15,
+//     },
+//   ];
+
+//   const inCleanPath = `${path}/sources/clean`;
+//   const inNsfwPath = `${path}/sources/nsfw`;
+
+//   const outCleanPath = `${path}/out/clean`;
+//   // const outCleanPath = ".";
+
+//   const outNsfwPath = `${path}/out/nsfw`;
+
+//   const inCleanFiles = await fs.promises.readdir(inCleanPath);
+//   const inNsfwFiles = await fs.promises.readdir(inNsfwPath);
+
+//   console.log(`Encoding ${inCleanPath} files...`);
+//   await encodeAllFiles(inCleanPath, inCleanFiles, outCleanPath, encodingParams);
+
+//   console.log("All done!");
+// };
