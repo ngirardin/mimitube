@@ -1,15 +1,36 @@
-import CliProgress from "cli-progress";
-import Ffmpeg from "fluent-ffmpeg";
+import encode from "./actions/encode";
+import generate from "./actions/generate";
 import parseArguments from "./parseArguments";
-import videoUtils from "./videoUtils";
+
+const app = () => {
+  // Remove the first argument that's added when ran from ts-node
+  const args = parseArguments(process.argv.slice(1));
+
+  if ("error" in args) {
+    console.error(args.error);
+    process.exit(1);
+  }
+
+  if (args.action === "generate") {
+    return generate(args.path);
+  }
+
+  if (args.action === "encode") {
+    return encode(args.path);
+  }
+
+  throw new Error("Unknown action");
+};
+
+app();
 
 // interface InputFile {
 //   file: string;
 //   creationTime: string;
 // }
 
-const normalizeCreationTime = (creationTime: Date): string =>
-  creationTime.toISOString().slice(0, 19).replace(/\:/g, "-");
+// const normalizeCreationTime = (creationTime: Date): string =>
+//   creationTime.toISOString().slice(0, 19).replace(/\:/g, "-");
 
 // interface InputFileVariant {
 //   name: string;
@@ -26,123 +47,110 @@ const normalizeCreationTime = (creationTime: Date): string =>
 //   ];
 // };
 
-interface Resolution {
-  height: number;
-  width: number;
-}
+// interface Resolution {
+//   height: number;
+//   width: number;
+// }
 
-interface EncodingParams {
-  bitrate: string;
-  crf: number;
-  maxRate: string;
-  minRate: string;
-  resolution: Resolution;
-  threads: number;
-  tileColumns: number;
-}
+// interface EncodingParams {
+//   bitrate: string;
+//   crf: number;
+//   maxRate: string;
+//   minRate: string;
+//   resolution: Resolution;
+//   threads: number;
+//   tileColumns: number;
+// }
 
-const encode = (fileIn: string, fileOut: string, encodingParams: EncodingParams, pass: 1 | 2): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const { bitrate, crf, maxRate, minRate, resolution, threads, tileColumns } = encodingParams;
+// const encode = (fileIn: string, fileOut: string, encodingParams: EncodingParams, pass: 1 | 2): Promise<void> =>
+//   new Promise((resolve, reject) => {
+//     const { bitrate, crf, maxRate, minRate, resolution, threads, tileColumns } = encodingParams;
 
-    const command = Ffmpeg(fileIn)
-      .size(`${resolution.width}x${resolution.height}`)
-      .fps(50)
-      .autopad()
-      .videoBitrate(bitrate)
-      .videoCodec("libvpx-vp9")
-      .outputOptions(`-minrate ${minRate}`)
-      .outputOptions(`-maxrate ${maxRate}`)
-      .outputOptions(`-tile-columns ${tileColumns}`)
-      .outputOptions("-g 240")
-      .outputOptions(`-threads ${threads}`)
-      .outputOptions("-quality good")
-      .outputOptions(`-crf ${crf}`)
-      .outputOptions("-speed 4")
-      .outputOptions(`-pass ${pass}`)
-      .audioCodec("libopus")
-      .output(fileOut);
+//     const command = Ffmpeg(fileIn)
+//       .size(`${resolution.width}x${resolution.height}`)
+//       .fps(50)
+//       .autopad()
+//       .videoBitrate(bitrate)
+//       .videoCodec("libvpx-vp9")
+//       .outputOptions(`-minrate ${minRate}`)
+//       .outputOptions(`-maxrate ${maxRate}`)
+//       .outputOptions(`-tile-columns ${tileColumns}`)
+//       .outputOptions("-g 240")
+//       .outputOptions(`-threads ${threads}`)
+//       .outputOptions("-quality good")
+//       .outputOptions(`-crf ${crf}`)
+//       .outputOptions("-speed 4")
+//       .outputOptions(`-pass ${pass}`)
+//       .audioCodec("libopus")
+//       .output(fileOut);
 
-    const fileProgress = new CliProgress.Bar({
-      format: "[{bar}] {percentage}% | {eta_formatted} | {fps} fps for pass {pass} at {width}x{height} | {timemark}",
-    });
-    fileProgress.start(100, 0, { fps: 0, pass: 0, width: 0, height: 0, timemark: "00:00:00" });
+//     const fileProgress = new CliProgress.Bar({
+//       format: "[{bar}] {percentage}% | {eta_formatted} | {fps} fps for pass {pass} at {width}x{height} | {timemark}",
+//     });
+//     fileProgress.start(100, 0, { fps: 0, pass: 0, width: 0, height: 0, timemark: "00:00:00" });
 
-    command
-      .on("error", function (err, stdout, stderr) {
-        console.error(err);
-        console.error(stdout);
-        console.error(stderr);
-        reject(err);
-      })
-      .on("progress", function (progress) {
-        const { currentFps, timemark, percent } = progress;
-        fileProgress.update(percent, {
-          fps: Math.round(currentFps),
-          width: encodingParams.resolution.width,
-          height: encodingParams.resolution.height,
-          pass,
-          timemark,
-        });
-      })
-      .on("end", () => {
-        // Clear the progress bar
-        fileProgress.stop();
-        resolve();
-      })
-      .run();
-  });
+//     command
+//       .on("error", function (err, stdout, stderr) {
+//         console.error(err);
+//         console.error(stdout);
+//         console.error(stderr);
+//         reject(err);
+//       })
+//       .on("progress", function (progress) {
+//         const { currentFps, timemark, percent } = progress;
+//         fileProgress.update(percent, {
+//           fps: Math.round(currentFps),
+//           width: encodingParams.resolution.width,
+//           height: encodingParams.resolution.height,
+//           pass,
+//           timemark,
+//         });
+//       })
+//       .on("end", () => {
+//         // Clear the progress bar
+//         fileProgress.stop();
+//         resolve();
+//       })
+//       .run();
+//   });
 
-const encodeFile = async (fileIn: string, fileOut: string, encodingParam: EncodingParams): Promise<void> => {
-  console.log(fileIn);
-  await encode(fileIn, fileOut, encodingParam, 1);
-  await encode(fileIn, fileOut, encodingParam, 2);
-};
+// const encodeFile = async (fileIn: string, fileOut: string, encodingParam: EncodingParams): Promise<void> => {
+//   console.log(fileIn);
+//   await encode(fileIn, fileOut, encodingParam, 1);
+//   await encode(fileIn, fileOut, encodingParam, 2);
+// };
 
-const encodeAllFiles = async (
-  inPath: string,
-  fileNames: string[],
-  outPath: string,
-  encodingParams: EncodingParams[]
-): Promise<void> => {
-  console.log(`Encoding ${fileNames.length} files from ${inPath} to ${outPath} in ${encodingParams.length} formats...`);
+// const encodeAllFiles = async (
+//   inPath: string,
+//   fileNames: string[],
+//   outPath: string,
+//   encodingParams: EncodingParams[]
+// ): Promise<void> => {
+//   console.log(`Encoding ${fileNames.length} files from ${inPath} to ${outPath} in ${encodingParams.length} formats...`);
 
-  const matrix = fileNames
-    .map((filename) =>
-      encodingParams.map((encodingParam) => ({
-        filename,
-        encodingParam,
-      }))
-    )
-    .flat();
+//   const matrix = fileNames
+//     .map((filename) =>
+//       encodingParams.map((encodingParam) => ({
+//         filename,
+//         encodingParam,
+//       }))
+//     )
+//     .flat();
 
-  // Run the encoding sequentially
-  await matrix.reduce(async (previousPromise, fileWithParams) => {
-    await previousPromise;
-    const { filename, encodingParam } = fileWithParams;
+//   // Run the encoding sequentially
+//   await matrix.reduce(async (previousPromise, fileWithParams) => {
+//     await previousPromise;
+//     const { filename, encodingParam } = fileWithParams;
 
-    const inFile = `${inPath}/${filename}`;
+//     const inFile = `${inPath}/${filename}`;
 
-    const creationDate = await videoUtils.getCreationTime(inFile);
-    const timestamp = normalizeCreationTime(creationDate.date);
-    const outFile = `${outPath}/${encodingParam.resolution.height}_${timestamp}.webm`;
+//     const creationDate = await videoUtils.getCreationTime(inFile);
+//     const timestamp = normalizeCreationTime(creationDate.date);
+//     const outFile = `${outPath}/${encodingParam.resolution.height}_${timestamp}.webm`;
 
-    return encodeFile(inFile, outFile, encodingParam);
-  }, Promise.resolve());
-};
-
-const app = () => {
-  const args = parseArguments(process.argv);
-
-  if ("error" in args) {
-    console.error(args.error);
-    process.exit(1);
-  }
-
-  console.log(args);
-};
-
-app();
+//     return encodeFile(inFile, outFile, encodingParam);
+//   }, Promise.resolve());
+// };
 
 // const app = async () => {
 
