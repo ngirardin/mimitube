@@ -15,9 +15,10 @@ const getCreationTime = async (metadata: FfprobeData): Promise<Date | undefined>
   return new Date(creationTime);
 };
 
-const probe = async (file: string): Promise<FfprobeData> => {
+const probe = async (path: string, file: string): Promise<FfprobeData> => {
+  const fullPath = `${path}/${file}`;
   return new Promise((resolve, reject) => {
-    Ffmpeg.ffprobe(file, (err: any, data: any) => {
+    Ffmpeg.ffprobe(fullPath, (err: any, data: any) => {
       if (err) {
         return reject(err);
       }

@@ -6,7 +6,7 @@ Object {
   "format": Object {
     "bit_rate": 60392564,
     "duration": 26.837333,
-    "filename": "/mnt/c/Users/ngira/Desktop/gopro/GX013175.MP4",
+    "filename": "/mnt/c/Users/ngira/Desktop/gopro/test/GX013175.MP4",
     "format_long_name": "QuickTime / MOV",
     "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
     "nb_programs": 0,
@@ -271,7 +271,7 @@ Object {
   "format": Object {
     "bit_rate": 38838036,
     "duration": 40.434,
-    "filename": "/mnt/c/Users/ngira/Desktop/gopro/VID_20201107_130823.mp4",
+    "filename": "/mnt/c/Users/ngira/Desktop/gopro/test/VID_20201107_130823.mp4",
     "format_long_name": "QuickTime / MOV",
     "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
     "nb_programs": 0,
@@ -409,7 +409,7 @@ Object {
   "format": Object {
     "bit_rate": 103346150,
     "duration": 290.991,
-    "filename": "/mnt/c/Users/ngira/Desktop/gopro/drone/DJI_0009.MP4",
+    "filename": "/mnt/c/Users/ngira/Desktop/gopro/test/DJI_0009.MP4",
     "format_long_name": "QuickTime / MOV",
     "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
     "nb_programs": 0,
