@@ -8747,6 +8747,7 @@ __metadata:
     ts-jest: ^26.4.3
     ts-node: ^9.0.0
     typescript: ^3.8.3
+    zod: beta
   languageName: unknown
   linkType: soft
 
@@ -15287,6 +15288,7 @@ fsevents@^1.2.7:
     concurrently: ^5.3.0
     eslint: ^7.13.0
     eslint-config-prettier: ^6.15.0
+    jest: ^26.6.3
     prettier: ^2.1.2
     typescript: ^4.0.5
   languageName: unknown
@@ -23487,5 +23489,12 @@ typescript@^3.8.3:
   version: 1.11.10
   resolution: "zod@npm:1.11.10"
   checksum: 9e7363c828246cc6e0f87e61608d3db75e68c5674b8d3a56e910ca5fc167b943b25e852503ba330f253443c2a76542a6a0e53ed791157c1b6ccfc0522da48872
+  languageName: node
+  linkType: hard
+
+"zod@npm:beta":
+  version: 2.0.0-beta.22
+  resolution: "zod@npm:2.0.0-beta.22"
+  checksum: 5893881885d7dface956d732437123f1aeb7e457ec81fe37b520bede20398b30041ceb54cd117fa020a38add9adf9175ef05ece836874233bdaee044407f2a45
   languageName: node
   linkType: hard

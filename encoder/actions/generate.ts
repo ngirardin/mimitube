@@ -1,11 +1,7 @@
 import fs from "fs/promises";
 import videoUtils from "../videoUtils";
 
-interface GenerateResult {
-  file: string;
-}
-
-export default async (path: string): Promise<GenerateResult[]> => {
+export default async (path: string): Promise<void> => {
   console.log(`Analysing files in ${path}...`);
   const files = await fs.readdir(path);
 
@@ -13,12 +9,22 @@ export default async (path: string): Promise<GenerateResult[]> => {
 
   console.log(`Found ${files.length} files, including ${videos.length} videos`);
 
-  return videos.map((file) => {
-    const attributes = [videoUtils.isDroneVideo(file) ? "isDrone" : undefined];
+  const rows = await Promise.all(
+    videos.map(async (video) => {
+      const attributes = [videoUtils.isDroneVideo(video) ? "isDrone" : undefined];
 
-    return {
-      file: file,
-      attributes: attributes.filter((attribute) => attribute !== undefined),
-    };
-  });
+      return {
+        definition: {
+          file: video,
+          attributes: attributes.filter((attribute) => attribute !== undefined),
+          progress: {
+            rekognition10x: false,
+            normalized: false,
+          },
+        },
+      };
+    })
+  );
+
+  await fs.writeFile(`${path}/project.json`, JSON.stringify(rows, null, 4));
 };
