@@ -2,10 +2,9 @@ import * as zod from "zod";
 
 export const videoSchema = zod.object({
   file: zod.string(),
-  attributes: zod
-    .string()
-    .refine((v) => ["isDrone"].includes(v))
-    .array(),
+  attributes: zod.object({
+    isDrone: zod.boolean(),
+  }),
   progress: zod.object({
     rekognition10x: zod.boolean(),
     normalized: zod.boolean(),

@@ -2,7 +2,7 @@ import { Project, projectSchema, Video, videoSchema } from "./projectSchema";
 
 const video1: Video = {
   file: "video1.mp4",
-  attributes: ["isDrone"],
+  attributes: { isDrone: true },
   progress: {
     rekognition10x: false,
     normalized: false,
@@ -11,7 +11,7 @@ const video1: Video = {
 
 const video2: Video = {
   file: "video2.mp4",
-  attributes: [],
+  attributes: { isDrone: false },
   progress: {
     rekognition10x: true,
     normalized: true,
@@ -19,15 +19,6 @@ const video2: Video = {
 };
 
 const project: Project = [video1, video2];
-
-const videoWithInvalidAttribute: Video = {
-  file: "invalidAttribute.mp4",
-  attributes: ["xxx"],
-  progress: {
-    rekognition10x: false,
-    normalized: false,
-  },
-};
 
 describe("the videoSchema", () => {
   it("should reject an invalid schema", () =>
@@ -44,7 +35,7 @@ describe("the videoSchema", () => {
         },
         {
           \\"code\\": \\"invalid_type\\",
-          \\"expected\\": \\"array\\",
+          \\"expected\\": \\"object\\",
           \\"received\\": \\"undefined\\",
           \\"path\\": [
             \\"attributes\\"
@@ -59,20 +50,6 @@ describe("the videoSchema", () => {
             \\"progress\\"
           ],
           \\"message\\": \\"Required\\"
-        }
-      ]"
-    `));
-
-  it("should reject an invalid attribute", () =>
-    expect(() => videoSchema.parse(videoWithInvalidAttribute)).toThrowErrorMatchingInlineSnapshot(`
-      "[
-        {
-          \\"code\\": \\"custom\\",
-          \\"message\\": \\"Invalid value.\\",
-          \\"path\\": [
-            \\"attributes\\",
-            0
-          ]
         }
       ]"
     `));
