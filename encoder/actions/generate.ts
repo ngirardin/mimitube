@@ -1,6 +1,6 @@
 import fs from "fs/promises";
+import { Project } from "../schemas/projectSchema";
 import videoUtils from "../videoUtils";
-import { Project } from "./projectSchema";
 
 const generateProject = async (path: string): Promise<Project> => {
   const files = await fs.readdir(path);
@@ -9,7 +9,7 @@ const generateProject = async (path: string): Promise<Project> => {
   console.log(`Found ${files.length} files, including ${videoFiles.length} videos`);
 
   return Promise.all(
-    files.map(async (file) => ({
+    videoFiles.map(async (file) => ({
       file,
       attributes: {
         isDrone: videoUtils.isDroneVideo(file),
