@@ -24,6 +24,19 @@ type Render = { file: string; render: Renderer };
 export default async (path: string) => {
   console.log(`Reading ${path}/project.json...`);
 
+  const pathOut = `${path}/out`;
+
+  try {
+    // Folder exists, empty it
+    await fs.access(pathOut);
+    console.log("Clearing existing out folder");
+    fs.rm(pathOut, { recursive: true });
+  } catch {
+    console.log("Creating out folder");
+    // Folder does not exists, create it
+    fs.mkdir(pathOut);
+  }
+
   if (await hasOutFolder(path)) {
     console.log("Checking project videos integrity...");
     //TODO const isIntegrityOK = await checkIntegrity(path);
@@ -58,8 +71,8 @@ export default async (path: string) => {
 
   for (const render of renders) {
     console.log(`Rendering ${render.file}...`);
-    await render.render(render.file);
-    console.log(`Rendering of ${render.file} done`);
+    const fileOut = await render.render(path, render.file, pathOut);
+    console.log(`Rendering of ${render.file} to ${fileOut} done`);
   }
 
   console.log(`Rendering of ${path} done!`);

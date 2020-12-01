@@ -1,12 +1,21 @@
+import { FfmpegCommand } from "fluent-ffmpeg";
+import fs from "fs/promises";
+import ffmpegUtils from "../../ffmpegUtils";
 import { Renderer } from "./RendererType";
 
-const rekognition10xRender: Renderer = (file: string): Promise<void> => {
-  console.log(`Starting rekognition10xRenderer for ${file}`);
+const rekognition10xRender: Renderer = async (pathIn: string, fileIn: string, pathOut: string): Promise<string> => {
+  console.log(`Starting rekognition10xRenderer for ${fileIn}...`);
 
-  ffmpeg;
-  // ffmpeg.exe -i DJI_0009.MP4 -filter:v "setpts=0.1*PTS" -an .\DJI_0009_speed10x.mp4
+  const speed = 10;
+  const command = (command: FfmpegCommand) => command.noAudio().videoFilter([`setpts=${1 / speed}*PTS`]);
 
-  console.log(`rekognition10xRenderer for ${file} done`);
+  const fileOut = await ffmpegUtils.encode(pathIn, fileIn, pathOut, "out.mp4", command);
+
+  const newName = fs.rename(fileOut, `rekognition_${fileIn}`);
+
+  console.log(`${fileIn} -> ${newName} done`);
+
+  return fileOut;
 };
 
 export default rekognition10xRender;

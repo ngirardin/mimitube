@@ -6,6 +6,7 @@ export const testVideos = {
   drone: `DJI_0009.MP4`, // no creation_date metadata
   gopro: `GX013175.MP4`,
   gsm: `VID_20201107_130823.mp4`,
+  text: "file.txt",
 };
 
 describe("The fileIsVideo method", () => {

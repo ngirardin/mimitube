@@ -15,8 +15,7 @@ export default {
   },
 
   getCreationTime: async (path: string, file: string): Promise<CreationTime> => {
-    const metadata = await ffprobeUtils.probe(path, file);
-    const creationTime = await ffprobeUtils.getCreationTime(metadata);
+    const creationTime = await ffprobeUtils.getCreationTime(path, file);
 
     if (creationTime) {
       return { source: "metadata", date: creationTime };
