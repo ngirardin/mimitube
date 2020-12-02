@@ -5,14 +5,14 @@ import ffprobeUtils from "./ffprobeUtils";
 type Command = (command: FfmpegCommand) => FfmpegCommand;
 
 const encode = (pathIn: string, fileIn: string, pathOut: string, fileOut: string, commands: Command): Promise<string> =>
-  new Promise((resolve, reject) => {
+  new Promise<string>(async (resolve, reject) => {
     const fileProgress = new CliProgress.Bar({
-      format: "[{bar}] {percentage}% | {eta_formatted} | {timemark} on {duration} | {fps} fps",
+      format: "[{bar}] {percentage}% | {eta_formatted} | {timemark} on {videoDuration} | {fps} fps",
     });
 
-    const duration = ffprobeUtils.getDuration(pathIn, fileIn);
+    const videoDuration = await ffprobeUtils.getDuration(pathIn, fileIn);
 
-    fileProgress.start(100, 0, { fps: 0, timemark: "00:00:00", duration });
+    fileProgress.start(100, 0, { fps: 0, timemark: "00:00:00", videoDuration });
 
     const command = Ffmpeg(`${pathIn}/${fileIn}`);
 
@@ -24,20 +24,20 @@ const encode = (pathIn: string, fileIn: string, pathOut: string, fileOut: string
         console.error(err);
         console.error(stdout);
         console.error(stderr);
-        reject(err);
+        return reject(err);
       })
       .on("progress", function (progress) {
         const { currentFps, timemark, percent } = progress;
         fileProgress.update(percent, {
           fps: Math.round(currentFps),
           timemark,
-          duration,
+          videoDuration,
         });
       })
       .on("end", () => {
         // Clear the progress bar
         fileProgress.stop();
-        resolve();
+        return resolve(`${pathOut}/${fileOut}`);
       })
       .run();
   });

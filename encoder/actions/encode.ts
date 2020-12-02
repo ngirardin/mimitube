@@ -1,6 +1,5 @@
 import * as fs from "fs/promises";
 import { Project, projectSchema } from "../schemas/projectSchema";
-import normalizedRender from "./renderers/normalizeRenderer";
 import rekognition10xRender from "./renderers/regoknition10xRenderer";
 import { Renderer } from "./renderers/RendererType";
 
@@ -10,9 +9,9 @@ const readProject = async (path: string): Promise<Project> => {
   return projectSchema.parse(json);
 };
 
-const hasOutFolder = async (path: string): Promise<boolean> => {
+const pathExists = async (path: string): Promise<boolean> => {
   try {
-    await fs.access(`${path}/out`);
+    await fs.access(path);
     return true;
   } catch {
     return false;
@@ -25,19 +24,17 @@ export default async (path: string) => {
   console.log(`Reading ${path}/project.json...`);
 
   const pathOut = `${path}/out`;
+  const pathOutTemp = `${pathOut}/temp`;
 
-  try {
-    // Folder exists, empty it
-    await fs.access(pathOut);
+  if (await pathExists(pathOutTemp)) {
     console.log("Clearing existing out folder");
-    fs.rm(pathOut, { recursive: true });
-  } catch {
-    console.log("Creating out folder");
-    // Folder does not exists, create it
-    fs.mkdir(pathOut);
+    await fs.rm(pathOutTemp, { recursive: true });
   }
 
-  if (await hasOutFolder(path)) {
+  console.log("Creating temp out folder");
+  await fs.mkdir(pathOutTemp);
+
+  if (await pathExists(pathOut)) {
     console.log("Checking project videos integrity...");
     //TODO const isIntegrityOK = await checkIntegrity(path);
   }
@@ -51,9 +48,9 @@ export default async (path: string) => {
   const renders: Render[] = videos.reduce((acc, video) => {
     const arr: Render[] = [];
 
-    if (!video.progress.normalized) {
-      arr.push({ file: video.file, render: normalizedRender });
-    }
+    // if (!video.progress.normalized) {
+    //   arr.push({ file: video.file, render: normalizedRender });
+    // }
 
     if (!video.progress.rekognition10x) {
       arr.push({ file: video.file, render: rekognition10xRender });
@@ -71,8 +68,14 @@ export default async (path: string) => {
 
   for (const render of renders) {
     console.log(`Rendering ${render.file}...`);
-    const fileOut = await render.render(path, render.file, pathOut);
+    const fileOut = await render.render(path, render.file, pathOutTemp);
+
     console.log(`Rendering of ${render.file} to ${fileOut} done`);
+
+    const newName = `${pathOut}/rekognition_${render.file}`;
+
+    console.log(`${fileOut} -> ${newName} done`);
+    await fs.rename(fileOut, newName);
   }
 
   console.log(`Rendering of ${path} done!`);
