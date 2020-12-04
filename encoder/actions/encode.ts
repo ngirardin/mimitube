@@ -1,13 +1,7 @@
 import * as fs from "fs/promises";
-import { Project, projectSchema } from "../schemas/projectSchema";
+import projectUtils from "../projectUtils";
 import rekognition10xRender from "./renderers/regoknition10xRenderer";
 import { Renderer } from "./renderers/RendererType";
-
-const readProject = async (path: string): Promise<Project> => {
-  const file = await fs.readFile(`${path}/project.json`);
-  const json = JSON.parse(file.toString());
-  return projectSchema.parse(json);
-};
 
 const pathExists = async (path: string): Promise<boolean> => {
   try {
@@ -18,7 +12,7 @@ const pathExists = async (path: string): Promise<boolean> => {
   }
 };
 
-type Render = { file: string; render: Renderer };
+export type Render = { file: string; render: Renderer };
 
 export default async (path: string) => {
   console.log(`Reading ${path}/project.json...`);
@@ -26,26 +20,29 @@ export default async (path: string) => {
   const pathOut = `${path}/out`;
   const pathOutTemp = `${pathOut}/temp`;
 
-  if (await pathExists(pathOutTemp)) {
-    console.log("Clearing existing out folder");
-    await fs.rm(pathOutTemp, { recursive: true });
-  }
-
-  console.log("Creating temp out folder");
-  await fs.mkdir(pathOutTemp);
-
   if (await pathExists(pathOut)) {
-    console.log("Checking project videos integrity...");
+    console.log("Project already rendered ");
+    console.log("TODO check integrity");
+    process.exit(0);
     //TODO const isIntegrityOK = await checkIntegrity(path);
   }
 
-  const videos = await readProject(path);
+  if (await pathExists(pathOutTemp)) {
+    console.log("Clearing existing out folder");
+    await fs.rm(`${pathOutTemp}`, { recursive: true });
+  }
 
-  console.log(`Found ${videos.length} videos`);
+  console.log("Creating temp out folder");
+  await fs.mkdir(pathOutTemp, { recursive: true });
+
+  const project = await projectUtils.readProject(path);
+  const projectVideos = project.videos;
+
+  console.log(`Found ${projectVideos.length} videos`);
 
   const init: Render[] = [];
 
-  const renders: Render[] = videos.reduce((acc, video) => {
+  const renders: Render[] = projectVideos.reduce((acc, video) => {
     const arr: Render[] = [];
 
     // if (!video.progress.normalized) {
@@ -68,7 +65,7 @@ export default async (path: string) => {
 
   for (const render of renders) {
     console.log(`Rendering ${render.file}...`);
-    const fileOut = await render.render(path, render.file, pathOutTemp);
+    const fileOut = await render.render.render(path, render.file, pathOutTemp);
 
     console.log(`Rendering of ${render.file} to ${fileOut} done`);
 
@@ -76,6 +73,9 @@ export default async (path: string) => {
 
     console.log(`${fileOut} -> ${newName} done`);
     await fs.rename(fileOut, newName);
+
+    const updatedProject = await projectUtils.setProgressComplete(project, render);
+    projectUtils.writeProject(updatedProject);
   }
 
   console.log(`Rendering of ${path} done!`);

@@ -1,8 +1,8 @@
 import fs from "fs/promises";
-import { Project } from "../schemas/projectSchema";
+import { ProjectVideos } from "../schemas/projectVideoSchema";
 import videoUtils from "../videoUtils";
 
-const generateProject = async (path: string): Promise<Project> => {
+const generateProject = async (path: string): Promise<ProjectVideos> => {
   const files = await fs.readdir(path);
   const videoFiles = files.filter(videoUtils.fileIsVideo);
 

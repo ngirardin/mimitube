@@ -1,6 +1,6 @@
-import { Project, projectSchema, Video, videoSchema } from "./projectSchema";
+import { ProjectVideo, ProjectVideos, projectVideoSchema, projectVideosSchema } from "./projectVideoSchema";
 
-const video1: Video = {
+const video1: ProjectVideo = {
   file: "video1.mp4",
   attributes: { isDrone: true },
   progress: {
@@ -9,7 +9,7 @@ const video1: Video = {
   },
 };
 
-const video2: Video = {
+const video2: ProjectVideo = {
   file: "video2.mp4",
   attributes: { isDrone: false },
   progress: {
@@ -18,11 +18,11 @@ const video2: Video = {
   },
 };
 
-const project: Project = [video1, video2];
+const projectVideos: ProjectVideos = [video1, video2];
 
-describe("the videoSchema", () => {
+describe("the projectVideoSchema", () => {
   it("should reject an invalid schema", () =>
-    expect(() => videoSchema.parse({})).toThrowErrorMatchingInlineSnapshot(`
+    expect(() => projectVideoSchema.parse({})).toThrowErrorMatchingInlineSnapshot(`
       "[
         {
           \\"code\\": \\"invalid_type\\",
@@ -55,11 +55,11 @@ describe("the videoSchema", () => {
     `));
 
   it("should accept a valid video", () => {
-    expect(videoSchema.parse(video1)).toEqual(video1);
-    expect(videoSchema.parse(video2)).toEqual(video2);
+    expect(projectVideoSchema.parse(video1)).toEqual(video1);
+    expect(projectVideoSchema.parse(video2)).toEqual(video2);
   });
 });
 
-describe("the projectSchema", () => {
-  it("should accept a valid schema", () => expect(projectSchema.parse(project)).toEqual(project));
+describe("the projectVideosSchema", () => {
+  it("should accept a valid project", () => expect(projectVideosSchema.parse(projectVideos)).toEqual(projectVideos));
 });
