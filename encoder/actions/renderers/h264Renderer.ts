@@ -2,21 +2,22 @@ import { FfmpegCommand } from "fluent-ffmpeg";
 import ffmpegUtils from "../../ffmpegUtils";
 import { Renderer } from "./RendererType";
 
-const rekognition10xRender: Renderer = {
-  name: "rekognition10x",
+const renderer: Renderer = {
+  name: "h264",
   render: async (pathIn: string, fileIn: string, pathOut: string): Promise<string> => {
-    console.log(`Starting rekognition10xRenderer for ${fileIn}...`);
+    console.log(`Starting h264 render for ${fileIn}...`);
 
-    const speed = 10;
     const command = (command: FfmpegCommand) =>
       command
-        .noAudio()
-        .videoFilter([`setpts=${1 / speed}*PTS`])
-        .videoCodec("libx264")
-        .outputOption("-preset ultrafast");
+        .audioCodec("aac")
+        .autopad()
+        .fps(50)
+        .size("3840x2160")
+        .outputOption(["-crf 20", "-preset veryfast"])
+        .videoCodec("libx264");
 
     return await ffmpegUtils.encode(pathIn, fileIn, pathOut, "out.mp4", command);
   },
 };
 
-export default rekognition10xRender;
+export default renderer;

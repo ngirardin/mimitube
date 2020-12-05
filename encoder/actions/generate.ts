@@ -15,14 +15,16 @@ const generateProject = async (path: string): Promise<ProjectVideos> => {
         isDrone: videoUtils.isDroneVideo(file),
       },
       progress: {
+        h264: false,
+        h265: false,
         rekognition10x: false,
-        normalized: false,
       },
     }))
   );
 };
 
 export default async (path: string): Promise<void> => {
+  // TODO check if project file already exists
   console.log(`Analyzing files in ${path}...`);
 
   const project = await generateProject(path);

@@ -9,20 +9,24 @@ export interface Project {
 
 const filename = "project.json";
 
+const readProject = async (path: string): Promise<Project> => {
+  const file = await fs.readFile(`${path}/${filename}`);
+  const json = JSON.parse(file.toString());
+  const projectVideos: ProjectVideos = projectVideosSchema.parse(json);
+  return { path, videos: projectVideos };
+};
+
 export default {
-  readProject: async (path: string): Promise<Project> => {
-    const file = await fs.readFile(`${path}/${filename}`);
-    const json = JSON.parse(file.toString());
-    const projectVideos: ProjectVideos = projectVideosSchema.parse(json);
-    return { path, videos: projectVideos };
-  },
+  readProject,
 
   setProgressComplete: async (project: Project, render: Render): Promise<Project> => {
     console.log(
-      `Updating project ${project} for video ${render.file}, setting render ${render.render.name} progress to true`
+      `Updating project ${project.path} for video ${render.file}, setting render ${render.render.name} progress to true`
     );
 
-    const newVideos: ProjectVideos = project.videos.map((v) => {
+    const diskProject = await readProject(project.path);
+
+    const newVideos: ProjectVideos = diskProject.videos.map((v) => {
       if (v.file !== render.file) {
         return v;
       }
@@ -34,5 +38,5 @@ export default {
   },
 
   writeProject: (project: Project): Promise<void> =>
-    fs.writeFile(`${project.path}/${filename}`, JSON.stringify(project)),
+    fs.writeFile(`${project.path}/${filename}`, JSON.stringify(project.videos)),
 };

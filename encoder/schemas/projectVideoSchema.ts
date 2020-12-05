@@ -1,8 +1,9 @@
 import * as zod from "zod";
 
 const progressSchema = zod.object({
+  h264: zod.boolean(),
+  h265: zod.boolean(),
   rekognition10x: zod.boolean(),
-  normalized: zod.boolean(),
 });
 
 export type ProgressSchema = zod.infer<typeof progressSchema>;
