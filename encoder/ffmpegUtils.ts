@@ -7,7 +7,7 @@ type Command = (command: FfmpegCommand) => FfmpegCommand;
 const encode = (pathIn: string, fileIn: string, pathOut: string, fileOut: string, commands: Command): Promise<string> =>
   new Promise<string>(async (resolve, reject) => {
     const fileProgress = new CliProgress.Bar({
-      format: "[{bar}] {percentage}% | {eta_formatted} | {timemark} on {videoDuration} | {fps} fps",
+      format: "[{bar}] {percentage}% | {fps} fps | elapsed: {duration_formatted} | ETA: {eta_formatted}",
     });
 
     const videoDuration = await ffprobeUtils.getDuration(pathIn, fileIn);
