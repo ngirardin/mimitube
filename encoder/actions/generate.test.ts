@@ -7,37 +7,42 @@ it("should generate a list of videos", async () => {
 
   const file = await fs.readFile(`${path}/project.json`);
   expect(file.toString()).toMatchInlineSnapshot(`
-    "[
-        {
-            \\"file\\": \\"DJI_0009.MP4\\",
-            \\"attributes\\": {
-                \\"isDrone\\": true
+    "{
+        \\"videos\\": [
+            {
+                \\"file\\": \\"DJI_0009.MP4\\",
+                \\"attributes\\": {
+                    \\"isDrone\\": true
+                },
+                \\"progress\\": {
+                    \\"h264\\": false,
+                    \\"h265\\": false,
+                    \\"rekognition10x\\": false
+                }
             },
-            \\"progress\\": {
-                \\"rekognition10x\\": false,
-                \\"normalized\\": false
-            }
-        },
-        {
-            \\"file\\": \\"GX013175.MP4\\",
-            \\"attributes\\": {
-                \\"isDrone\\": false
+            {
+                \\"file\\": \\"GX013175.MP4\\",
+                \\"attributes\\": {
+                    \\"isDrone\\": false
+                },
+                \\"progress\\": {
+                    \\"h264\\": false,
+                    \\"h265\\": false,
+                    \\"rekognition10x\\": false
+                }
             },
-            \\"progress\\": {
-                \\"rekognition10x\\": false,
-                \\"normalized\\": false
+            {
+                \\"file\\": \\"VID_20201107_130823.mp4\\",
+                \\"attributes\\": {
+                    \\"isDrone\\": false
+                },
+                \\"progress\\": {
+                    \\"h264\\": false,
+                    \\"h265\\": false,
+                    \\"rekognition10x\\": false
+                }
             }
-        },
-        {
-            \\"file\\": \\"VID_20201107_130823.mp4\\",
-            \\"attributes\\": {
-                \\"isDrone\\": false
-            },
-            \\"progress\\": {
-                \\"rekognition10x\\": false,
-                \\"normalized\\": false
-            }
-        }
-    ]"
+        ]
+    }"
   `);
 });

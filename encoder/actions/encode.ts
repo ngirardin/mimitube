@@ -74,7 +74,7 @@ export default async (path: string) => {
 
     console.log(`Rendering of ${render.file} to ${fileOut} done`);
 
-    const newName = `${pathOut}/rekognition_${render.file}`;
+    const newName = `${pathOut}/${render.render.name}_${render.file}`;
 
     console.log(`${fileOut} -> ${newName} done`);
     await fs.rename(fileOut, newName);

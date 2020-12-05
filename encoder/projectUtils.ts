@@ -1,19 +1,14 @@
 import fs from "fs/promises";
 import { Render } from "./actions/encode";
-import { ProjectVideos, projectVideosSchema } from "./schemas/projectVideoSchema";
-
-export interface Project {
-  path: string;
-  videos: ProjectVideos;
-}
+import { Project, projectSchema } from "./schemas/projectVideoSchema";
 
 const filename = "project.json";
 
 const readProject = async (path: string): Promise<Project> => {
   const file = await fs.readFile(`${path}/${filename}`);
   const json = JSON.parse(file.toString());
-  const projectVideos: ProjectVideos = projectVideosSchema.parse(json);
-  return { path, videos: projectVideos };
+  const project = projectSchema.parse(json);
+  return { ...project, path };
 };
 
 export default {
@@ -21,12 +16,14 @@ export default {
 
   setProgressComplete: async (project: Project, render: Render): Promise<Project> => {
     console.log(
-      `Updating project ${project.path} for video ${render.file}, setting render ${render.render.name} progress to true`
+      `Updating project ${project.path} for video ${render.file}, setting render ${String(
+        render.render.name
+      )} progress to true`
     );
 
     const diskProject = await readProject(project.path);
 
-    const newVideos: ProjectVideos = diskProject.videos.map((v) => {
+    const newVideos = diskProject.videos.map((v) => {
       if (v.file !== render.file) {
         return v;
       }
@@ -37,6 +34,9 @@ export default {
     return { ...project, videos: newVideos };
   },
 
-  writeProject: (project: Project): Promise<void> =>
-    fs.writeFile(`${project.path}/${filename}`, JSON.stringify(project.videos)),
+  writeProject: async (project: Project): Promise<void> => {
+    // No need to write the path, it's only set when reading the project
+    const { path, ...rest } = project;
+    fs.writeFile(`${project.path}/${filename}`, JSON.stringify(rest, null, 4));
+  },
 };
