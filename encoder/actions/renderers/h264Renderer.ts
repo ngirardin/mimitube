@@ -11,7 +11,7 @@ const renderer: Renderer = {
       command
         .audioCodec("aac")
         .autopad()
-        .fps(50)
+        .fps(60)
         .size("3840x2160")
         .outputOption(["-crf 20", "-preset veryfast"])
         .videoCodec("libx264");
