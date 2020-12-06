@@ -1,6 +1,7 @@
 import * as fs from "fs/promises";
 import projectUtils from "../projectUtils";
 import h264Renderer from "./renderers/h264Renderer";
+import h265Renderer from "./renderers/h265Renderer";
 import rekognition10xRender from "./renderers/rekognition10xRenderer";
 import { Renderer } from "./renderers/RendererType";
 
@@ -52,6 +53,10 @@ export default async (path: string) => {
     // TODO map the renderer name / method somewhere to avoid this if
     if (!video.progress.h264) {
       arr.push({ file: video.file, render: h264Renderer });
+    }
+
+    if (!video.progress.h265) {
+      arr.push({ file: video.file, render: h265Renderer });
     }
 
     if (!video.progress.rekognition10x) {
