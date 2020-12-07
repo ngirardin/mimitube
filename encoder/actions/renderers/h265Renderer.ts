@@ -17,7 +17,7 @@ const renderer: Renderer = {
         .outputOption(["-crf 25", "-preset veryfast"])
         .videoCodec("libx265");
 
-    return await ffmpegUtils.encode(pathIn, fileIn, pathOut, "out.mp4", command);
+    return ffmpegUtils.encode(pathIn, fileIn, pathOut, command);
   },
 };
 

@@ -1,5 +1,7 @@
 import * as fs from "fs/promises";
+import ffmpegUtils from "../ffmpegUtils";
 import projectUtils from "../projectUtils";
+import videoUtils from "../videoUtils";
 import h264Renderer from "./renderers/h264Renderer";
 import h265Renderer from "./renderers/h265Renderer";
 import rekognition10xRender from "./renderers/rekognition10xRenderer";
@@ -68,24 +70,50 @@ export default async (path: string) => {
 
   if (renders.length === 0) {
     console.log("All the videos have been already been rendered");
-    process.exit(0);
+  } else {
+    // TODO move to fn
+
+    console.log(`${renders.length} renders queued`);
+
+    for (const render of renders) {
+      console.log(`Rendering ${render.file}...`);
+      const fileOut = await render.render.render(path, render.file, pathOutTemp);
+
+      console.log(`Rendering of ${render.file} to ${fileOut} done`);
+
+      const newName = `${pathOut}/${render.render.name}_${render.file}`;
+
+      console.log(`${fileOut} -> ${newName} done`);
+      await fs.rename(fileOut, newName);
+
+      const updatedProject = await projectUtils.setProgressComplete(project, render);
+      projectUtils.writeProject(updatedProject);
+    }
   }
 
-  console.log(`${renders.length} renders queued`);
+  // TODO check for merged flag
 
-  for (const render of renders) {
-    console.log(`Rendering ${render.file}...`);
-    const fileOut = await render.render.render(path, render.file, pathOutTemp);
+  console.log(`Merging videos...`);
 
-    console.log(`Rendering of ${render.file} to ${fileOut} done`);
+  // Sort the video
+  const concatFiles = (
+    await Promise.all(
+      projectVideos.map(async (v) => ({
+        file: v.file,
+        creationDate: (await videoUtils.getCreationTime(project.path, v.file)).date.getTime(),
+      }))
+    )
+  ).sort((video) => video.creationDate);
 
-    const newName = `${pathOut}/${render.render.name}_${render.file}`;
+  for (const codec of ["h264", "h265"]) {
+    console.log(`Concatenating ${codec} videos...`);
+    const concatOut = await ffmpegUtils.concat(
+      pathOut,
+      pathOutTemp,
+      concatFiles.map((v) => `${codec}_${v.file}`)
+    );
 
-    console.log(`${fileOut} -> ${newName} done`);
-    await fs.rename(fileOut, newName);
-
-    const updatedProject = await projectUtils.setProgressComplete(project, render);
-    projectUtils.writeProject(updatedProject);
+    await fs.rename(concatOut, `${pathOut}/${codec}.mp4`);
   }
 
   console.timeEnd(timeMessage);

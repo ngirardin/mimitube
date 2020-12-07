@@ -15,7 +15,7 @@ const renderer: Renderer = {
         .videoCodec("libx264")
         .outputOption("-preset ultrafast");
 
-    return await ffmpegUtils.encode(pathIn, fileIn, pathOut, "out.mp4", command);
+    return await ffmpegUtils.encode(pathIn, fileIn, pathOut, command);
   },
 };
 

@@ -1,25 +1,18 @@
 import CliProgress from "cli-progress";
 import Ffmpeg, { FfmpegCommand } from "fluent-ffmpeg";
-import ffprobeUtils from "./ffprobeUtils";
+import fs from "fs/promises";
 
-type Command = (command: FfmpegCommand) => FfmpegCommand;
+const fileOut = "out.mp4";
 
-const encode = (pathIn: string, fileIn: string, pathOut: string, fileOut: string, commands: Command): Promise<string> =>
-  new Promise<string>(async (resolve, reject) => {
+const executeCommand = (command: FfmpegCommand): Promise<void> =>
+  new Promise<void>(async (resolve, reject) => {
     const fileProgress = new CliProgress.Bar({
       format: "[{bar}] {percentage}% | {fps} fps | elapsed: {duration_formatted} | ETA: {eta_formatted}",
     });
 
-    const videoDuration = await ffprobeUtils.getDuration(pathIn, fileIn);
-
-    fileProgress.start(100, 0, { fps: 0, timemark: "00:00:00", videoDuration });
-
-    const command = Ffmpeg(`${pathIn}/${fileIn}`);
-
-    commands(command);
+    fileProgress.start(100, 0, { fps: 0 });
 
     command
-      .output(`${pathOut}/${fileOut}`)
       .on("error", function (err, stdout, stderr) {
         console.error(err);
         console.error(stdout);
@@ -27,37 +20,50 @@ const encode = (pathIn: string, fileIn: string, pathOut: string, fileOut: string
         return reject(err);
       })
       .on("progress", function (progress) {
-        const { currentFps, timemark, percent } = progress;
+        const { currentFps, percent } = progress;
         fileProgress.update(percent, {
           fps: Math.round(currentFps),
-          timemark,
-          videoDuration,
         });
       })
       .on("end", () => {
         // Clear the progress bar
         fileProgress.stop();
-        return resolve(`${pathOut}/${fileOut}`);
+        return resolve();
       })
       .run();
   });
 
-export default { encode };
+const concat = async (pathInOut: string, pathOutTemp: string, filesIn: string[]): Promise<string> => {
+  const playlist = `${pathOutTemp}/concat`;
+  await fs.writeFile(playlist, filesIn.map((file) => `file '${pathInOut}/${file}'`).join("\n"));
 
-// const command = Ffmpeg(fileIn)
-//   .size(`${resolution.width}x${resolution.height}`)
-//   .fps(50)
-//   .autopad()
-//   .videoBitrate(bitrate)
-//   .videoCodec("libvpx-vp9")
-//   .outputOptions(`-minrate ${minRate}`)
-//   .outputOptions(`-maxrate ${maxRate}`)
-//   .outputOptions(`-tile-columns ${tileColumns}`)
-//   .outputOptions("-g 240")
-//   .outputOptions(`-threads ${threads}`)
-//   .outputOptions("-quality good")
-//   .outputOptions(`-crf ${crf}`)
-//   .outputOptions("-speed 4")
-//   .outputOptions(`-pass ${pass}`)
-//   .audioCodec("libopus")
-//   .output(fileOut);
+  const pathFileOut = `${pathInOut}/${fileOut}`;
+
+  const command = Ffmpeg(playlist)
+    .inputOption("-f concat")
+    .inputOption("-safe 0")
+    .outputOption("-c copy")
+    .output(`${pathInOut}/out.mp4`);
+
+  await executeCommand(command);
+
+  await fs.rm(playlist);
+  return pathFileOut;
+};
+
+const encode = async (
+  pathIn: string,
+  fileIn: string,
+  pathOut: string,
+  updateCommand: (command: FfmpegCommand) => void
+): Promise<string> => {
+  const command = Ffmpeg(`${pathIn}/${fileIn}`);
+  updateCommand(command);
+  command.output(`${pathOut}/${fileOut}`);
+
+  await executeCommand(command);
+
+  return `${pathOut}/${fileOut}`;
+};
+
+export default { concat, encode };
