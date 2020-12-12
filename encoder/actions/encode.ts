@@ -1,4 +1,5 @@
 import * as fs from "fs/promises";
+import ffmpegUtils from "../ffmpegUtils";
 import projectUtils from "../projectUtils";
 import videoUtils from "../videoUtils";
 import h264Renderer from "./renderers/h264Renderer";
