@@ -1,10 +1,8 @@
 import * as fs from "fs/promises";
-import ffmpegUtils from "../ffmpegUtils";
 import projectUtils from "../projectUtils";
 import videoUtils from "../videoUtils";
 import h264Renderer from "./renderers/h264Renderer";
 import h265Renderer from "./renderers/h265Renderer";
-import rekognition10xRender from "./renderers/rekognition10xRenderer";
 import { Renderer } from "./renderers/RendererType";
 
 const pathExists = async (path: string): Promise<boolean> => {
@@ -22,7 +20,7 @@ export default async (path: string) => {
   const timeMessage = `Rendering of ${path} done!`;
   console.time(timeMessage);
 
-  console.log(`Reading ${path}/project.json...`);
+  const project = await projectUtils.readProject(path);
 
   const pathOut = `${path}/out`;
   const pathOutTemp = `${pathOut}/temp`;
@@ -42,7 +40,6 @@ export default async (path: string) => {
   console.log("Creating temp out folder");
   await fs.mkdir(pathOutTemp, { recursive: true });
 
-  const project = await projectUtils.readProject(path);
   const projectVideos = project.videos;
 
   console.log(`Found ${projectVideos.length} videos`);
@@ -61,9 +58,9 @@ export default async (path: string) => {
       arr.push({ file: video.file, render: h265Renderer });
     }
 
-    if (!video.progress.rekognition10x) {
-      arr.push({ file: video.file, render: rekognition10xRender });
-    }
+    // if (!video.progress.rekognition10x) {
+    //   arr.push({ file: video.file, render: rekognition10xRender });
+    // }
 
     return [...acc, ...arr];
   }, init);
@@ -103,7 +100,7 @@ export default async (path: string) => {
         creationDate: (await videoUtils.getCreationTime(project.path, v.file)).date.getTime(),
       }))
     )
-  ).sort((video) => video.creationDate);
+  ).sort((video1, video2) => video1.creationDate - video2.creationDate);
 
   for (const codec of ["h264", "h265"]) {
     console.log(`Concatenating ${codec} videos...`);
