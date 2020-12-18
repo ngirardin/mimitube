@@ -10,6 +10,7 @@ const renderer: Renderer = {
     const command = (command: FfmpegCommand) =>
       command
         .audioCodec("aac")
+        .audioFrequency(44100)
         .autopad()
         .fps(60)
         .size("3840x2160")
