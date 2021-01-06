@@ -111,7 +111,7 @@ export default async (path: string) => {
       concatFiles.map((v) => `${codec}_${v.file}`)
     );
 
-    await fs.rename(concatOut, `${pathOut}/${codec}.mp4`);
+    await fs.rename(concatOut, `${path}/${codec}.mp4`);
   }
 
   console.timeEnd(timeMessage);
