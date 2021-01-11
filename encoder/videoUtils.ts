@@ -6,7 +6,7 @@ interface CreationTime {
   date: Date;
 }
 
-const videoExtensions = ["mp4"];
+const videoExtensions = ["mp4", "mts"];
 
 export default {
   fileIsVideo: (file: string): boolean => {
