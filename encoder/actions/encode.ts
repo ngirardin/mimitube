@@ -74,14 +74,10 @@ export default async (path: string) => {
     console.log(`${renders.length} renders queued`);
 
     for (const render of renders) {
-      console.log(`Rendering ${render.file}...`);
       const fileOut = await render.render.render(path, render.file, pathOutTemp);
-
-      console.log(`Rendering of ${render.file} to ${fileOut} done`);
 
       const newName = `${pathOut}/${render.render.name}_${render.file}`;
 
-      console.log(`${fileOut} -> ${newName} done`);
       await fs.rename(fileOut, newName);
 
       const updatedProject = await projectUtils.setProgressComplete(project, render);
