@@ -17,7 +17,8 @@ export default {
   getCreationTime: async (path: string, file: string): Promise<Date | undefined> => {
     const metadata = await probe(path, file);
     const tags: any = metadata.format.tags;
-    const creationTime: string = tags.creation_time;
+
+    const creationTime: string = tags?.creation_time;
 
     if (!creationTime) {
       return undefined;

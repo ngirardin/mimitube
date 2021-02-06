@@ -85,8 +85,6 @@ export default async (path: string) => {
     }
   }
 
-  // TODO check for merged flag
-
   console.log(`Merging videos...`);
 
   // Sort the video
